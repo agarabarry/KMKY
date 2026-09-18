@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Know Me, Knowing You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --hot: #ff5d8f;
+    --hot-2: #ff8a5d;
+    --deep: #7b2ff7;
+    --deep-2: #4b1fa8;
+    --ink: #241b3a;
+    --card-bg: #ffffff;
+    --card-text: #241b3a;
+    --card-sub: #6b6285;
+    --pill-bg: #f4f0ff;
+    --pill-text: #6a3fd6;
+    --gold: #ffd166;
+    --line: rgba(36,27,58,0.08);
+    --shadow: 0 18px 40px rgba(50, 10, 60, 0.35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --card-bg: #241a38;
+      --card-text: #f6f1ff;
+      --card-sub: #c6b9e6;
+      --pill-bg: #382a55;
+      --pill-text: #e3c9ff;
+      --line: rgba(255,255,255,0.1);
+      --shadow: 0 18px 40px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --card-bg: #241a38;
+    --card-text: #f6f1ff;
+    --card-sub: #c6b9e6;
+    --pill-bg: #382a55;
+    --pill-text: #e3c9ff;
+    --line: rgba(255,255,255,0.1);
+    --shadow: 0 18px 40px rgba(0,0,0,0.55);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    min-height: 100vh;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,138,93,0.55), transparent 45%),
+      radial-gradient(circle at 85% 15%, rgba(255,93,143,0.5), transparent 50%),
+      radial-gradient(circle at 50% 90%, rgba(123,47,247,0.55), transparent 55%),
+      linear-gradient(160deg, var(--deep-2), var(--ink) 70%);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    padding: 28px 16px 48px;
+  }
+  .app {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 76px);
+  }
+  .brand {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+  .brand .kicker {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .brand h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 32px;
+    line-height: 1.15;
+    margin: 0;
+    text-shadow: 0 4px 18px rgba(0,0,0,0.3);
+  }
+  .brand p {
+    margin: 8px 0 0;
+    color: rgba(255,255,255,0.75);
+    font-size: 14px;
+  }
+  .screen { flex: 1; display: flex; flex-direction: column; gap: 16px; animation: fadeIn .35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0);} }
+  .hidden { display: none !important; }
+
+  /* Mode cards on home */
+  .mode-card {
+    background: var(--card-bg);
+    color: var(--card-text);
+    border-radius: 22px;
+    padding: 22px 20px;
+    box-shadow: var(--shadow);
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: inherit;
+    transition: transform .15s ease;
+  }
+  .mode-card:active { transform: scale(0.98); }
+  .mode-card .emoji { font-size: 34px; flex-shrink: 0; }
+  .mode-card h3 { margin: 0 0 4px; font-family: 'Fredoka', sans-serif; font-size: 18px; }
+  .mode-card p { margin: 0; font-size: 13px; color: var(--card-sub); line-height: 1.4; }
+
+  /* Generic buttons */
+  .btn {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 16px;
+    padding: 15px 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform .12s ease, opacity .12s ease;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--hot), var(--hot-2));
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(255,93,143,0.4);
+    width: 100%;
+  }
+  .btn-ghost {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), #ffb14e);
+    color: #4a2a00;
+  }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-row .btn { flex: 1; }
+  .link-btn {
+    background: none; border: none; color: rgba(255,255,255,0.75);
+    font-family: 'Manrope', sans-serif; font-size: 13px; text-decoration: underline;
+    cursor: pointer; padding: 6px; align-self: center;
+  }
+
+  /* top bar within a screen */
+  .topbar { display: flex; align-items: center; justify-content: space-between; }
+  .back-btn {
+    background: rgba(255,255,255,0.14);
+    border: none; color: #fff; width: 38px; height: 38px; border-radius: 12px;
+    font-size: 16px; cursor: pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .topbar-title { font-family:'Fredoka',sans-serif; font-size: 16px; font-weight:600; }
+
+  /* category grid */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .cat-card {
+    background: var(--card-bg);
+    color: var(--card-text);
+    border-radius: 18px;
+    padding: 16px 12px;
+    text-align: center;
+    border: 2px solid transparent;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    font-family: inherit;
+  }
+  .cat-card .emoji { font-size: 28px; display:block; margin-bottom: 6px; }
+  .cat-card .name { font-size: 12.5px; font-weight: 700; line-height: 1.25; }
+  .cat-card .count { font-size: 10.5px; color: var(--card-sub); margin-top: 4px; }
+  .cat-card.selected { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255,209,102,0.35), var(--shadow); }
+
+  /* turn indicator */
+  .turn-pill {
+    align-self: center;
+    background: var(--pill-bg);
+    color: var(--pill-text);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    display: flex; align-items:center; gap: 8px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+  /* question card */
+  .qcard {
+    background: var(--card-bg);
+    color: var(--card-text);
+    border-radius: 26px;
+    padding: 36px 26px;
+    min-height: 210px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: var(--shadow);
+    position: relative;
+    gap: 14px;
+  }
+  .qcard .cat-tag {
+    position: absolute;
+    top: 16px; left: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--pill-bg);
+    color: var(--pill-text);
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+  .qcard .qnum {
+    position: absolute;
+    top: 16px; right: 18px;
+    font-size: 11px;
+    color: var(--card-sub);
+    font-weight: 600;
+  }
+  .qcard .question-text {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 21px;
+    line-height: 1.4;
+    font-weight: 600;
+    padding: 0 4px;
+  }
+  .qcard .placeholder { color: var(--card-sub); font-size: 15px; font-family: 'Manrope',sans-serif; font-weight: 500; }
+
+  /* room code */
+  .room-box {
+    background: var(--card-bg); color: var(--card-text);
+    border-radius: 18px; padding: 18px; text-align: center; box-shadow: var(--shadow);
+  }
+  .room-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--card-sub); font-weight: 700; }
+  .room-code {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 34px;
+    letter-spacing: 8px;
+    font-weight: 700;
+    margin: 6px 0 12px;
+  }
+  .field {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 2px solid var(--line);
+    background: var(--card-bg);
+    color: var(--card-text);
+    font-family: 'Fredoka', sans-serif;
+    font-size: 18px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-align: center;
+    outline: none;
+  }
+  .field::placeholder { letter-spacing: normal; text-transform: none; font-family: 'Manrope', sans-serif; font-size: 14px; color: var(--card-sub); }
+  .status-msg {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    min-height: 18px;
+  }
+  .status-msg.err { color: #ffb3b3; font-weight: 600; }
+  .divider { display:flex; align-items:center; gap: 10px; color: rgba(255,255,255,0.5); font-size: 12px; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background: rgba(255,255,255,0.2); }
+
+  .players-row { display:flex; gap:8px; justify-content:center; flex-wrap: wrap; }
+  .player-chip {
+    font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .player-chip.online { border-color: #66e29a; color: #b9ffd4; }
+  .player-chip.waiting { color: rgba(255,255,255,0.55); }
+
+  .spin-wrap { display:flex; flex-direction: column; gap: 10px; }
+
+  footer.hint { text-align:center; font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand">
+    <div class="kicker">200 Questions</div>
+    <h1>Know Me,<br>Knowing You</h1>
+    <p>Pick a category. Spin a question. Get a little closer.</p>
+  </div>
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen">
+    <button class="mode-card" onclick="goOnePlayerIntro()">
+      <div class="emoji">🎮</div>
+      <div>
+        <h3>1 Player Mode</h3>
+        <p>Same device, pass it around. Take turns answering.</p>
+      </div>
+    </button>
+    <button class="mode-card" onclick="goTwoPlayerHub()">
+      <div class="emoji">🌐</div>
+      <div>
+        <h3>2 Player Mode</h3>
+        <p>Different locations, playing live. Share a room code.</p>
+      </div>
+    </button>
+    <footer class="hint">200 questions across 7 categories</footer>
+  </div>
+
+  <!-- 1P: category select -->
+  <div id="screen-1p-category" class="screen hidden">
+    <div class="topbar">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topbar-title">Choose a category</div>
+      <div style="width:38px"></div>
+    </div>
+    <div class="cat-grid" id="cat-grid-1p"></div>
+  </div>
+
+  <!-- 1P: game -->
+  <div id="screen-1p-game" class="screen hidden">
+    <div class="topbar">
+      <button class="back-btn" onclick="goOnePlayerIntro()">←</button>
+      <div class="topbar-title" id="op-cat-name">Category</div>
+      <button class="back-btn" title="Change category" onclick="goOnePlayerIntro()">🔀</button>
+    </div>
+    <div class="turn-pill" id="op-turn-pill"><span class="dot"></span><span id="op-turn-text">Player 1's turn to answer</span></div>
+    <div class="qcard">
+      <span class="cat-tag" id="op-qcard-tag">—</span>
+      <span class="qnum" id="op-qcard-num"></span>
+      <div class="question-text" id="op-question-text">Tap "New Question" to begin</div>
+    </div>
+    <div class="spin-wrap">
+      <button class="btn btn-primary" onclick="onePlayerNext()">🎲 New Question — Pass to Other Player</button>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="onePlayerSameTurn()">↻ Reroll (same player)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2P: hub (create/join) -->
+  <div id="screen-2p-hub" class="screen hidden">
+    <div class="topbar">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topbar-title">Play Online</div>
+      <div style="width:38px"></div>
+    </div>
+    <div class="mode-card" style="cursor:default; flex-direction:column; align-items:flex-start;">
+      <h3 style="margin-bottom:2px;">Start a new room</h3>
+      <p style="margin-bottom:12px;">You'll get a code to send your partner.</p>
+      <button class="btn btn-primary" onclick="createRoom()">✨ Create Room</button>
+    </div>
+    <div class="divider">or</div>
+    <div class="mode-card" style="cursor:default; flex-direction:column; align-items:flex-start;">
+      <h3 style="margin-bottom:2px;">Join a room</h3>
+      <p style="margin-bottom:12px;">Enter the code your partner sent you.</p>
+      <input id="join-code-input" class="field" maxlength="5" placeholder="ROOM CODE" style="margin-bottom:10px;">
+      <button class="btn btn-gold" style="width:100%;" onclick="joinRoom()">🔗 Join Room</button>
+    </div>
+    <div class="status-msg" id="hub-status"></div>
+  </div>
+
+  <!-- 2P: game -->
+  <div id="screen-2p-game" class="screen hidden">
+    <div class="topbar">
+      <button class="back-btn" onclick="leaveRoom()">←</button>
+      <div class="topbar-title">Room <span id="tp-room-code"></span></div>
+      <button class="back-btn" title="Copy code" onclick="copyRoomCode()">📋</button>
+    </div>
+    <div class="players-row">
+      <span class="player-chip online" id="tp-chip-me"></span>
+      <span class="player-chip waiting" id="tp-chip-other">Waiting for partner…</span>
+    </div>
+
+    <div id="tp-category-picker">
+      <div class="cat-grid" id="cat-grid-2p"></div>
+    </div>
+
+    <div id="tp-question-area" class="hidden" style="display:flex; flex-direction:column; gap:16px;">
+      <div class="turn-pill" id="tp-turn-pill"><span class="dot"></span><span id="tp-turn-text">—</span></div>
+      <div class="qcard">
+        <span class="cat-tag" id="tp-qcard-tag">—</span>
+        <span class="qnum" id="tp-qcard-num"></span>
+        <div class="question-text" id="tp-question-text">Waiting for first question…</div>
+      </div>
+      <div class="spin-wrap">
+        <button class="btn btn-primary" id="tp-spin-btn" onclick="twoPlayerSpin()">🎯 Spin Next Question</button>
+        <button class="link-btn" onclick="showCategoryPicker()">Change category</button>
+      </div>
+    </div>
+    <div class="status-msg" id="tp-status"></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- Question bank ---------------- */
+const CATEGORIES = [
+  { id: "fun", emoji: "🎲", name: "Fun, Random & Easy", questions: [
+    "What is your favourite colour?","What is your favourite food?","What is your favourite drink?",
+    "What is your favourite movie of all time?","What song can you never skip?","What is your favourite football club?",
+    "Messi or Ronaldo?","What is your favourite country?","What is your dream city to visit?",
+    "What is your dream holiday destination?","What is your idea of a perfect weekend?",
+    "Are you more of a morning person or a night person?","Beach or mountains?","City life or quiet life?",
+    "Netflix or YouTube?","Phone call or text?","What is your favourite thing to do when you have the house to yourself?",
+    "What is your favourite way to spend a lazy day?","What is something that can instantly put you in a good mood?",
+    "What is something that always makes you laugh?","What is your guilty pleasure?","What is your pet peeve?",
+    "What is something you are surprisingly good at?","What is something you wish you were better at?",
+    "What is something you are obsessed with?","What is something you can never say no to?",
+    "What is the funniest thing that has ever happened to you?","What is the most adventurous thing you've ever done?",
+    "What is something people are usually surprised to learn about you?",
+    "If you could have dinner with anyone in the world, who would it be?","What is your favourite childhood game?",
+    "What is your favourite childhood memory?","What is your favourite type of music?",
+    "What is your favourite Nigerian meal?","What is one food you absolutely hate?",
+    "What is one movie you think everyone should watch?","What is one song that reminds you of a particular person?",
+    "What is your favourite way to relax?","What is something you could talk about for hours?",
+    "What is the weirdest thing you find attractive?"
+  ]},
+  { id: "money", emoji: "💰", name: "Money, Dreams & Lifestyle", questions: [
+    "What is your dream car?","What is your dream house?","What is your dream job?",
+    "What is one thing you would buy immediately if money wasn't an issue?",
+    "What is one thing you wish you could have right now?",
+    "What would you do first if you suddenly received ₦100 million?",
+    "What would I need to do for you to give me ₦20 million?",
+    "If you had unlimited money for one day, what would you do?",
+    "Would you rather be extremely rich or extremely famous?",
+    "Would you rather own a successful business or have a high-paying job?",
+    "What does success mean to you?","What does happiness mean to you?","What is your biggest dream in life?",
+    "What is one thing you must achieve before you die?","What is one experience on your bucket list?",
+    "What is something you've always wanted to try?","Where do you see yourself in five years?",
+    "What kind of life do you ultimately want?","What is something you want to accomplish before you turn 50?",
+    "Would you choose money or peace of mind?","What is the most you've ever spent on something unnecessary?",
+    "What is one luxury you would never want to live without?","Are you more of a saver or a spender?",
+    "Should couples have joint bank accounts?","How important is financial stability when choosing a partner?",
+    "Would you lend a partner a large amount of money?","Would you rather own your dream home or travel the world for a year?",
+    "If you could start any business tomorrow, what would it be?","What would you do if you knew you couldn't fail?",
+    "If you didn't need money to survive, what would you spend your life doing?"
+  ]},
+  { id: "personality", emoji: "🧠", name: "Personality & Character", questions: [
+    "How would you describe yourself in three words?","What do you think is your strongest quality?",
+    "What is your biggest weakness?","Are you naturally shy or outgoing?","Are you more emotional or logical?",
+    "Do you easily trust people?","Do you forgive easily?","Do you prefer to lead or follow?",
+    "Do you enjoy being the centre of attention?","How important is alone time to you?",
+    "What do people commonly misunderstand about you?","What is something you are very particular about?",
+    "What kind of person brings out the best in you?","What kind of behaviour immediately puts you off?",
+    "What makes you feel respected?","What makes you feel appreciated?",
+    "What is one personality trait you wish you could change?","What is one thing you are proud of about yourself?",
+    "What is something you have learned about yourself recently?","What does being a good person mean to you?",
+    "Do you consider yourself stubborn?","How do you react when you are under pressure?",
+    "Are you naturally competitive?","Do you like surprises?","Do you make decisions with your head or your heart?",
+    "Do you usually say exactly what you think?","What makes you feel comfortable around someone?",
+    "What makes you immediately distrust someone?","Do you prefer stability or excitement?",
+    "What is one thing about your personality you wouldn't change?"
+  ]},
+  { id: "attraction", emoji: "❤️", name: "Attraction & Dating", questions: [
+    "What do you like most in a lady/guy?","What is an instant turn-off in a lady/guy?","What turns you on?",
+    "What makes someone attractive to you beyond their looks?",
+    "What is the first thing you notice about someone you're attracted to?",
+    "What physical feature attracts you the most?","What personality trait attracts you the most?",
+    "What are your top 3 physical features you're attracted to in a man/woman? Rate them.",
+    "What are your top 3 non-physical features you're attracted to? Rate them.",
+    "What are your top 3 qualities in a partner?","What are your top 3 deal breakers?",
+    "What are the top 3 things that make you lose interest in someone?",
+    "What are the top 3 things that make you fall for someone?",
+    "What are the top 3 things you need from a partner?","What are the top 3 things you bring into a relationship?",
+    "What is your ideal first date?","Who should make the first move?","Do you believe in love at first sight?",
+    "How quickly do you know if you're interested in someone?","Would you date someone completely different from you?",
+    "How important is humour when choosing a partner?","How important is confidence in a partner?",
+    "Do you prefer someone who texts you constantly or gives you space?",
+    "What kind of compliment means the most to you?",
+    "What is something small someone can do that you find very attractive?",
+    "What is your biggest dating red flag?","What is your biggest dating green flag?",
+    "Would you rather have someone who makes you laugh or someone who makes you feel secure?",
+    "Would you rather have strong chemistry or strong friendship with your partner?",
+    "What would make you want to go on a second date with someone?"
+  ]},
+  { id: "love", emoji: "💕", name: "Love & Relationships", questions: [
+    "What does love mean to you?","What makes you feel loved?","How do you normally show someone you care?",
+    "What is your idea of a healthy relationship?","What is your idea of a perfect relationship?",
+    "What does loyalty mean to you?","What does commitment mean to you?",
+    "How important is physical attraction in a relationship?","How important is communication in a relationship?",
+    "How do you prefer to resolve arguments?","How do you behave when you're angry with someone you love?",
+    "How do you want your partner to handle you when you're upset?",
+    "How much personal space do you need in a relationship?",
+    "What is something you would never tolerate in a relationship?",
+    "What is something you would never forgive a partner for?","Can you forgive cheating?",
+    "Can you remain friends with an ex?","Would you check your partner's phone?","Should couples share passwords?",
+    "Would you tell your partner everything about your past?","Would you choose chemistry or compatibility?",
+    "Would you choose love over money?","Would you rather have a romantic partner or a financially generous partner?",
+    "Would you date someone your friends don't like?","Would you date someone who earns significantly less than you?",
+    "Would you date someone who earns significantly more than you?",
+    "Would you do a long-distance relationship for someone you love?","Would you move to another country for love?",
+    "How important is romance to you?","What is the sweetest thing someone has ever done for you?"
+  ]},
+  { id: "family", emoji: "👨‍👩‍👧", name: "Family & Future", questions: [
+    "Would you like to get married?","What age would you ideally like to get married?","First child: male or female?",
+    "How many kids would you like to have?","Would you consider adoption?",
+    "What kind of parent do you think you would be?","What is one value you definitely want your children to have?",
+    "Would you want your children to grow up in Nigeria?","How important is family to you?",
+    "How important is your family's opinion about your partner?","How involved should families be in a relationship?",
+    "Would you live with your partner's parents?",
+    "Would you rather marry someone from your culture or a different culture?",
+    "What does your ideal home look like?","Would you rather live in a busy city or somewhere quiet?",
+    "Would you relocate in the future?","Where would you relocate to?",
+    "How soon would you relocate if given the opportunity?","Would you expect your partner to relocate for you?",
+    "What kind of future would you like to build with a partner?"
+  ]},
+  { id: "deep", emoji: "🔥", name: "Deep, Personal & Revealing", questions: [
+    "What is your greatest fear?","What is your biggest insecurity?","What is your greatest achievement so far?",
+    "What experience has changed you the most?","What is one mistake that taught you an important lesson?",
+    "What is one decision you wish you had handled differently?",
+    "What is something from your childhood that still influences you?","Tell me your best-kept secret.",
+    "What is something very few people know about you?","What is the craziest thing you've ever done?",
+    "What is the most embarrassing thing you've ever done?","What is the biggest lie you've ever told?",
+    "What is something you've never told your parents?","What is one thing you wish you could tell your younger self?",
+    "What is something you have done that you would probably never do again?",
+    "What is something you are currently trying to figure out about yourself?",
+    "What is something you wish people understood about you?","What is one question you are afraid to ask me?",
+    "What is one thing you would like to know about me but haven't asked?",
+    "What is one question you've been hoping I'd ask you?"
+  ]}
+];
+const catById = id => CATEGORIES.find(c => c.id === id);
+
+/* ---------------- Screen helpers ---------------- */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+function goHome() {
+  leaveRoom(true);
+  showScreen('screen-home');
+}
+
+/* ---------------- Category grid rendering ---------------- */
+function renderCatGrid(containerId, onPick, selectedId) {
+  const grid = document.getElementById(containerId);
+  grid.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    const card = document.createElement('button');
+    card.className = 'cat-card' + (cat.id === selectedId ? ' selected' : '');
+    card.innerHTML = `<span class="emoji">${cat.emoji}</span><span class="name">${cat.name}</span><span class="count">${cat.questions.length} questions</span>`;
+    card.onclick = () => onPick(cat.id);
+    grid.appendChild(card);
+  });
+}
+
+/* ================= 1 PLAYER MODE ================= */
+let op = { category: null, asked: {}, currentIndex: null, turn: 1 };
+
+function goOnePlayerIntro() {
+  renderCatGrid('cat-grid-1p', pickOnePlayerCategory, op.category);
+  showScreen('screen-1p-category');
+}
+function pickOnePlayerCategory(catId) {
+  op.category = catId;
+  if (!op.asked[catId]) op.asked[catId] = [];
+  op.currentIndex = null;
+  op.turn = 1;
+  document.getElementById('op-cat-name').textContent = catById(catId).emoji + ' ' + catById(catId).name;
+  document.getElementById('op-question-text').textContent = 'Tap "New Question" to begin';
+  document.getElementById('op-qcard-tag').textContent = catById(catId).name;
+  document.getElementById('op-qcard-num').textContent = '';
+  updateOnePlayerTurnUI();
+  showScreen('screen-1p-game');
+}
+function pickRandomQuestionIndex(cat, askedArr) {
+  if (askedArr.length >= cat.questions.length) askedArr.length = 0; // reshuffle when exhausted
+  let idx;
+  do { idx = Math.floor(Math.random() * cat.questions.length); } while (askedArr.includes(idx));
+  askedArr.push(idx);
+  return idx;
+}
+function renderOnePlayerQuestion() {
+  const cat = catById(op.category);
+  document.getElementById('op-question-text').textContent = cat.questions[op.currentIndex];
+  document.getElementById('op-qcard-num').textContent = (op.asked[op.category].length) + ' / ' + cat.questions.length;
+}
+function updateOnePlayerTurnUI() {
+  document.getElementById('op-turn-text').textContent = `Player ${op.turn}'s turn to answer`;
+}
+function onePlayerNext() {
+  if (!op.category) return;
+  const cat = catById(op.category);
+  op.currentIndex = pickRandomQuestionIndex(cat, op.asked[op.category]);
+  op.turn = op.turn === 1 ? 2 : 1;
+  updateOnePlayerTurnUI();
+  renderOnePlayerQuestion();
+}
+function onePlayerSameTurn() {
+  if (!op.category) return;
+  const cat = catById(op.category);
+  op.currentIndex = pickRandomQuestionIndex(cat, op.asked[op.category]);
+  renderOnePlayerQuestion();
+}
+
+/* ================= 2 PLAYER MODE (online, realtime via db capability) ================= */
+let dbNS = null;          // resolved db namespace
+let dbAvailable = null;   // null = unknown, true/false once checked
+let roomCode = null;
+let roomRef = null;
+let unsubscribe = null;
+let myRole = null;        // 1 = creator, 2 = joiner
+let roomState = null;     // last known snapshot data
+
+async function ensureDb() {
+  if (dbAvailable !== null) return dbAvailable;
+  try {
+    if (window.claude && typeof window.claude.use === 'function') {
+      dbNS = await window.claude.use('db');
+    }
+  } catch (e) { dbNS = null; }
+  dbAvailable = !!dbNS;
+  return dbAvailable;
+}
+
+function genRoomCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no ambiguous chars
+  let code = '';
+  for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+async function goTwoPlayerHub() {
+  document.getElementById('hub-status').textContent = '';
+  document.getElementById('hub-status').className = 'status-msg';
+  showScreen('screen-2p-hub');
+  const ok = await ensureDb();
+  if (!ok) {
+    document.getElementById('hub-status').textContent = "Online play needs this page open in Claude. Try 1 Player mode on this device instead.";
+    document.getElementById('hub-status').className = 'status-msg err';
+    document.querySelectorAll('#screen-2p-hub .btn').forEach(b => b.disabled = true);
+  }
+}
+
+async function createRoom() {
+  const ok = await ensureDb();
+  if (!ok) return;
+  const status = document.getElementById('hub-status');
+  status.className = 'status-msg';
+  status.textContent = 'Creating room…';
+  const code = genRoomCode();
+  const ref = dbNS.doc('rooms/' + code);
+  try {
+    await ref.set({
+      category: null,
+      questionIndex: null,
+      askedIndices: {},
+      turn: 1,
+      round: 0,
+      createdAt: Date.now(),
+      p1Active: Date.now(),
+      p2Active: null
+    });
+    myRole = 1;
+    enterRoom(code, ref);
+  } catch (e) {
+    status.textContent = 'Could not create a room. Please try again.';
+    status.className = 'status-msg err';
+  }
+}
+
+async function joinRoom() {
+  const ok = await ensureDb();
+  if (!ok) return;
+  const input = document.getElementById('join-code-input');
+  const code = (input.value || '').trim().toUpperCase();
+  const status = document.getElementById('hub-status');
+  status.className = 'status-msg';
+  if (!code) { status.textContent = 'Enter a room code first.'; status.className = 'status-msg err'; return; }
+  status.textContent = 'Joining…';
+  const ref = dbNS.doc('rooms/' + code);
+  try {
+    const snap = await ref.get();
+    if (!snap.exists) {
+      status.textContent = "That room code wasn't found. Double-check it with your partner.";
+      status.className = 'status-msg err';
+      return;
+    }
+    myRole = 2;
+    await ref.update({ p2Active: Date.now() });
+    enterRoom(code, ref);
+  } catch (e) {
+    status.textContent = 'Could not join that room. Please try again.';
+    status.className = 'status-msg err';
+  }
+}
+
+function enterRoom(code, ref) {
+  roomCode = code;
+  roomRef = ref;
+  document.getElementById('tp-room-code').textContent = code;
+  document.getElementById('tp-chip-me').textContent = myRole === 1 ? '🟣 You — Player 1' : '🟠 You — Player 2';
+  showScreen('screen-2p-game');
+  showCategoryPicker();
+  renderCatGrid('cat-grid-2p', pickTwoPlayerCategory, null);
+  subscribeRoom();
+}
+
+function subscribeRoom() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = roomRef.onSnapshot(
+    snap => {
+      if (!snap.exists) {
+        document.getElementById('tp-status').textContent = 'This room no longer exists.';
+        document.getElementById('tp-status').className = 'status-msg err';
+        return;
+      }
+      roomState = snap.data();
+      renderRoomState();
+    },
+    err => {
+      const s = document.getElementById('tp-status');
+      s.className = 'status-msg err';
+      if (err.code === 'revoked') s.textContent = 'Connection to this room ended.';
+      else s.textContent = 'Live sync hiccup — reopen the room if this persists.';
+    }
+  );
+}
+
+function renderRoomState() {
+  if (!roomState) return;
+  // presence chip
+  const otherActive = myRole === 1 ? roomState.p2Active : roomState.p1Active;
+  const otherLabel = myRole === 1 ? 'Player 2' : 'Player 1';
+  const chip = document.getElementById('tp-chip-other');
+  if (otherActive) { chip.textContent = '🟢 ' + otherLabel + ' online'; chip.className = 'player-chip online'; }
+  else { chip.textContent = 'Waiting for ' + otherLabel + '…'; chip.className = 'player-chip waiting'; }
+
+  renderCatGrid('cat-grid-2p', pickTwoPlayerCategory, roomState.category);
+
+  if (roomState.category && roomState.questionIndex !== null && roomState.questionIndex !== undefined) {
+    document.getElementById('tp-category-picker').classList.add('hidden');
+    document.getElementById('tp-question-area').classList.remove('hidden');
+    const cat = catById(roomState.category);
+    document.getElementById('tp-qcard-tag').textContent = cat.name;
+    document.getElementById('tp-question-text').textContent = cat.questions[roomState.questionIndex];
+    const askedCount = (roomState.askedIndices && roomState.askedIndices[roomState.category]) ? roomState.askedIndices[roomState.category].length : 0;
+    document.getElementById('tp-qcard-num').textContent = askedCount + ' / ' + cat.questions.length;
+
+    const myTurn = roomState.turn === myRole;
+    document.getElementById('tp-turn-text').textContent = myTurn ? '🎤 Your turn to answer!' : `Waiting for Player ${roomState.turn} to answer…`;
+    const spinBtn = document.getElementById('tp-spin-btn');
+    spinBtn.disabled = !myTurn;
+    spinBtn.textContent = myTurn ? '🎯 Answer, then Spin Next' : '⏳ Not your turn';
+  } else {
+    document.getElementById('tp-category-picker').classList.remove('hidden');
+    document.getElementById('tp-question-area').classList.add('hidden');
+  }
+}
+
+function showCategoryPicker() {
+  document.getElementById('tp-category-picker').classList.remove('hidden');
+  document.getElementById('tp-question-area').classList.add('hidden');
+}
+
+async function pickTwoPlayerCategory(catId) {
+  if (!roomRef) return;
+  try {
+    await roomRef.update({ category: catId, questionIndex: null });
+    await spinNewQuestionFor(catId, roomState && roomState.turn ? roomState.turn : 1);
+  } catch (e) {
+    document.getElementById('tp-status').textContent = "Couldn't update the category — try again.";
+    document.getElementById('tp-status').className = 'status-msg err';
+  }
+}
+
+async function spinNewQuestionFor(catId, keepTurn) {
+  const cat = catById(catId);
+  const askedMap = (roomState && roomState.askedIndices) ? { ...roomState.askedIndices } : {};
+  const askedArr = askedMap[catId] ? [...askedMap[catId]] : [];
+  const idx = pickRandomQuestionIndex(cat, askedArr);
+  askedMap[catId] = askedArr;
+  await roomRef.update({
+    category: catId,
+    questionIndex: idx,
+    askedIndices: askedMap,
+    turn: keepTurn
+  });
+}
+
+async function twoPlayerSpin() {
+  if (!roomState || !roomRef) return;
+  if (roomState.turn !== myRole) return;
+  const catId = roomState.category;
+  const cat = catById(catId);
+  const askedMap = { ...(roomState.askedIndices || {}) };
+  const askedArr = askedMap[catId] ? [...askedMap[catId]] : [];
+  const idx = pickRandomQuestionIndex(cat, askedArr);
+  askedMap[catId] = askedArr;
+  const nextTurn = myRole === 1 ? 2 : 1;
+  try {
+    await roomRef.update({
+      questionIndex: idx,
+      askedIndices: askedMap,
+      turn: nextTurn,
+      round: (roomState.round || 0) + 1
+    });
+  } catch (e) {
+    document.getElementById('tp-status').textContent = 'Spin failed — try again.';
+    document.getElementById('tp-status').className = 'status-msg err';
+  }
+}
+
+function copyRoomCode() {
+  if (!roomCode) return;
+  const text = `Join my "Know Me, Knowing You" room! Code: ${roomCode}`;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      const s = document.getElementById('tp-status');
+      s.className = 'status-msg';
+      s.textContent = 'Code copied to clipboard!';
+      setTimeout(() => { if (s.textContent === 'Code copied to clipboard!') s.textContent = ''; }, 2000);
+    }).catch(() => {});
+  }
+}
+
+function leaveRoom(silent) {
+  if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+  roomCode = null; roomRef = null; myRole = null; roomState = null;
+  if (!silent) showScreen('screen-2p-hub');
+}
+</script>
+</body>
+</html>
